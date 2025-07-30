@@ -75,7 +75,7 @@ def get_img_as_base64(file):
     return base64.b64encode(data).decode()
 
 # Load sidebar image (replace with your actual image file)
-img = get_img_as_base64("sidenav2.webp")  # Use your sidebar image filename here
+
 main_bg_img = get_img_as_base64("dark.jpg")
 
 page_bg_img = f"""
