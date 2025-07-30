@@ -291,7 +291,7 @@ filtered_quake_df = quake_df[(quake_df["mag"] >= min_mag) & (quake_df["mag"] <= 
 # Only show Geographic Distribution plot (limit to 1000 rows for performance)
 geo_df = filtered_quake_df.copy()
 if len(geo_df) > 1000:
-    geo_df = geo_df.sample(1000, random_state=42)
+    geo_df = geo_df.sample(50000, random_state=42)
 with st.container():
     st.header("Geographic Distribution with small dataset")
     st.plotly_chart(
