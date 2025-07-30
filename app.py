@@ -279,7 +279,7 @@ st.caption("Created by Jarrod, 2025 · Powered by Scikit-learn · Data: USGS")
 
 
 # Load earthquake data
-quake_df = pd.read_csv("usgs_earthquake_data_2000_2025.csv")
+quake_df = pd.read_csv("usgs_earthquake_data_2000_2025(Small sample size) Real one with submission folder.csv")
 
 # --- Sidebar filters for earthquake data ---
 min_mag, max_mag = st.sidebar.slider("Min Magnitude", float(quake_df["mag"].min()), float(quake_df["mag"].max()), float(quake_df["mag"].min()), key="filter_min_mag"), st.sidebar.slider("Max Magnitude", float(quake_df["mag"].min()), float(quake_df["mag"].max()), float(quake_df["mag"].max()), key="filter_max_mag")
