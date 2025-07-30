@@ -109,6 +109,7 @@ st.markdown('<div class="big-title">🌏 Earthquake Magnitude Predictor</div>', 
 st.write("""
 Instantly predict the **magnitude** of an earthquake given event characteristics.
 Your input is run through a state-of-the-art AI model trained on global seismic data (2000–2025).
+Ps. Please use dark theme for the streamlit for best experience
 """)
 st.write("---")
 
