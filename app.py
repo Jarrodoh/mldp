@@ -109,7 +109,6 @@ st.markdown('<div class="big-title">🌏 Earthquake Magnitude Predictor</div>', 
 st.write("""
 Instantly predict the **magnitude** of an earthquake given event characteristics.
 Your input is run through a state-of-the-art AI model trained on global seismic data (2000–2025).
-Ps. Please use dark theme for the streamlit for best experience
 """)
 st.write("---")
 
@@ -136,14 +135,118 @@ st.sidebar.markdown(
         color: #eee;
         margin-bottom: 2em;
     }
+    .links-section {
+        margin-top: 2em;
+        padding-top: 1.5em;
+        border-top: 1px solid #444;
+    }
+    .links-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 1em;
+    }
+    .link-item {
+        margin-bottom: 0.8em;
+        padding: 0.5em;
+        background: rgba(255,255,255,0.1);
+        border-radius: 6px;
+        border-left: 3px solid #3399ff;
+    }
+    .link-item a {
+        color: #66ccff !important;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .link-item a:hover {
+        color: #99ddff !important;
+        text-decoration: underline;
+    }
+    .link-desc {
+        font-size: 0.9rem;
+        color: #ccc;
+        margin-top: 0.3em;
+    }
     </style>
     <div class="sidebar-title">🌏 Earthquake Magnitude Predictor</div>
     <div class="sidebar-desc">
     This app predicts the magnitude of an earthquake using a machine learning model trained on global seismic data (2000–2025). Enter event details and instantly see the predicted magnitude, powered by Gradient Boosting. Explore how location, timing, and measurement quality affect predictions!
     </div>
+    
     """,
     unsafe_allow_html=True
 )
+
+# Add the links section using Streamlit components
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🔗 Useful Links & Resources")
+
+st.sidebar.markdown("""
+<style>
+.resource-card {
+    background: linear-gradient(135deg, rgba(51,153,255,0.1) 0%, rgba(51,204,204,0.1) 100%);
+    border: 1px solid rgba(51,153,255,0.3);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+    transition: all 0.3s ease;
+    border-left: 4px solid #3399ff;
+}
+.resource-card:hover {
+    background: linear-gradient(135deg, rgba(51,153,255,0.2) 0%, rgba(51,204,204,0.2) 100%);
+    border-color: rgba(51,153,255,0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(51,153,255,0.2);
+}
+.resource-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #66ccff;
+    text-decoration: none;
+    margin-bottom: 4px;
+    display: block;
+}
+.resource-title:hover {
+    color: #99ddff;
+    text-decoration: underline;
+}
+.resource-desc {
+    font-size: 12px;
+    color: #bbb;
+    line-height: 1.3;
+}
+</style>
+
+<div class="resource-card">
+    <a href="https://earthquake.usgs.gov/" target="_blank" class="resource-title">🌎 USGS Earthquake Hazards Program</a>
+    <div class="resource-desc">Real-time earthquake data and monitoring worldwide</div>
+</div>
+
+<div class="resource-card">
+    <a href="https://www.emsc-csem.org/" target="_blank" class="resource-title">🇪🇺 European-Mediterranean Seismological Centre</a>
+    <div class="resource-desc">European earthquake information and alerts</div>
+</div>
+
+<div class="resource-card">
+    <a href="https://www.iris.edu/hq/" target="_blank" class="resource-title">🔬 IRIS - Seismology Research</a>
+    <div class="resource-desc">Educational resources and research data</div>
+</div>
+
+<div class="resource-card">
+    <a href="https://www.globalcmt.org/" target="_blank" class="resource-title">📊 Global CMT Catalog</a>
+    <div class="resource-desc">Earthquake source mechanisms and data</div>
+</div>
+
+<div class="resource-card">
+    <a href="https://www.ready.gov/earthquakes" target="_blank" class="resource-title">🛡️ Ready.gov - Earthquake Safety</a>
+    <div class="resource-desc">Earthquake preparedness and safety tips</div>
+</div>
+
+<div class="resource-card">
+    <a href="https://www.fema.gov/earthquake" target="_blank" class="resource-title">🚨 FEMA Earthquake Resources</a>
+    <div class="resource-desc">Emergency preparedness and response</div>
+</div>
+""", unsafe_allow_html=True)
 
 
 # --- Load the trained model ---
@@ -163,9 +266,10 @@ ui_features = list(feature_names)
 # --- UI: Collect raw features required by the model pipeline ---
 # List of raw columns your pipeline expects (update as needed)
 raw_features = [
-    'lat_lon_interaction', 'magError', 'magNst', 'rms', 'latitude', 'depth', 'longitude',
-    'days_since_start', 'horizontalError', 'magType', 'dmin', 'depthError',
-    'depth_mag_interaction', 'depth_type', 'nst', 'gap'
+    'latitude', 'longitude', 'depth', 'lat_lon_interaction', 
+    'depth_mag_interaction', 'days_since_start', 'magError', 'magNst',
+    'nst', 'gap', 'dmin', 'rms', 'horizontalError', 'depthError', 
+    'magType', 'depth_type', 'target_bin'
 ]
 
 # --- Feature explanations for non-experts ---
@@ -213,66 +317,155 @@ with st.container():
         color: #eee;
         margin-bottom: 0.2em;
     }
+    /* Custom styling for expanders - black 80% translucent */
+    .streamlit-expanderHeader {
+        background: rgba(0, 0, 0, 0.8) !important;
+        border-radius: 10px !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+    .streamlit-expanderContent {
+        background: rgba(0, 0, 0, 0.8) !important;
+        border-radius: 0 0 10px 10px !important;
+        padding: 20px !important;
+        border: none !important;
+    }
+    div[data-testid="stExpander"] {
+        background: rgba(0, 0, 0, 0.8) !important;
+        border-radius: 10px !important;
+        margin-bottom: 15px !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    div[data-testid="stExpander"] > div:first-child {
+        background: rgba(0, 0, 0, 0.8) !important;
+        color: #ffffff !important;
+    }
+    div[data-testid="stExpander"] summary {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+    }
     </style>
     <div class="form-container">
     <div class="form-title">Enter Earthquake Event Details</div>
     """, unsafe_allow_html=True)
+    
     user_input = {}
-    slider_features = [
-        'lat_lon_interaction', 'magError', 'magNst', 'rms', 'latitude', 'depth', 'longitude',
-        'days_since_start', 'horizontalError', 'dmin', 'depthError', 'depth_mag_interaction', 'nst', 'gap'
-    ]
-    dropdown_features = {
-        'magType': ['mb', 'ml', 'mwr', 'other'],
-        'depth_type': ['shallow', 'deep', 'unknown']
-    }
-    # Split features for columns
-    col1, col2 = st.columns(2)
-    for i, feat in enumerate(slider_features):
-        explanation = feature_explanations.get(feat, '')
-        min_val, max_val = 0.0, 100.0
-        if feat == 'latitude': min_val, max_val = -90.0, 90.0
-        if feat == 'longitude': min_val, max_val = -180.0, 180.0
-        if feat == 'depth': min_val, max_val = 0.0, 700.0
-        if feat == 'magError': min_val, max_val = 0.0, 2.0
-        if feat == 'rms': min_val, max_val = 0.0, 5.0
-        if feat == 'gap': min_val, max_val = 0.0, 360.0
-        target_col = col1 if i < len(slider_features)//2 else col2
-        user_input[feat] = target_col.slider(
-            label=f"{feat.replace('_', ' ').title()}",
-            min_value=min_val,
-            max_value=max_val,
-            value=min_val,
-            help=explanation,
-            key=feat
+    
+    # Location Information (Collapsible)
+    with st.expander("📍 Location Information", expanded=True):
+        col1, col2 = st.columns(2)
+        
+        user_input['latitude'] = col1.slider(
+            "Latitude", min_value=-90.0, max_value=90.0, value=0.0,
+            help="North-South position of the earthquake epicenter", key="latitude"
         )
-    # Dropdowns in second column
-    for i, (feat, options) in enumerate(dropdown_features.items()):
-        explanation = feature_explanations.get(feat, '')
-        col = col2 if i == 0 else col1
-        user_input[feat] = col.selectbox(
-            label=f"{feat.replace('_', ' ').title()}",
-            options=options,
-            help=explanation,
-            key=feat
+        user_input['longitude'] = col2.slider(
+            "Longitude", min_value=-180.0, max_value=180.0, value=0.0,
+            help="East-West position of the earthquake epicenter", key="longitude"
         )
+        user_input['lat_lon_interaction'] = col1.slider(
+            "Lat Lon Interaction", min_value=-16200.0, max_value=16200.0, value=0.0,
+            help="Latitude × Longitude interaction", key="lat_lon_interaction"
+        )
+        user_input['depth'] = col2.slider(
+            "Depth (km)", min_value=0.0, max_value=700.0, value=10.0,
+            help="How deep below the surface the earthquake occurred", key="depth"
+        )
+        user_input['depth_type'] = col1.selectbox(
+            "Depth Type", options=['shallow', 'deep'], 
+            help="Whether the event is shallow or deep", key="depth_type"
+        )
+    
+    # Magnitude & Quality Information
+    with st.expander("📊 Magnitude & Quality Information", expanded=True):
+        col1, col2 = st.columns(2)
+        
+        user_input['magError'] = col1.slider(
+            "Magnitude Error", min_value=0.0, max_value=2.0, value=0.1,
+            help="Uncertainty in the measured magnitude", key="magError"
+        )
+        user_input['magNst'] = col2.slider(
+            "Magnitude Stations", min_value=0.0, max_value=100.0, value=10.0,
+            help="Number of stations that contributed to magnitude reading", key="magNst"
+        )
+        user_input['magType'] = col1.selectbox(
+            "Magnitude Type", options=['mb', 'ml', 'mwr', 'other'],
+            help="Method used to calculate magnitude", key="magType"
+        )
+        user_input['rms'] = col2.slider(
+            "RMS", min_value=0.0, max_value=5.0, value=0.5,
+            help="Root Mean Square of travel time residuals", key="rms"
+        )
+    
+    # Station & Error Information  
+    with st.expander("🔧 Station & Error Information", expanded=False):
+        col1, col2 = st.columns(2)
+        
+        user_input['nst'] = col1.slider(
+            "Number of Stations", min_value=0.0, max_value=100.0, value=20.0,
+            help="Total stations used to locate the event", key="nst"
+        )
+        user_input['gap'] = col2.slider(
+            "Gap (degrees)", min_value=0.0, max_value=360.0, value=90.0,
+            help="Largest azimuthal gap between stations", key="gap"
+        )
+        user_input['dmin'] = col1.slider(
+            "Distance to Nearest Station", min_value=0.0, max_value=100.0, value=10.0,
+            help="Closest seismic station to the event (km)", key="dmin"
+        )
+        user_input['horizontalError'] = col2.slider(
+            "Horizontal Error", min_value=0.0, max_value=100.0, value=5.0,
+            help="Uncertainty in the epicenter location (km)", key="horizontalError"
+        )
+        user_input['depthError'] = col1.slider(
+            "Depth Error", min_value=0.0, max_value=100.0, value=5.0,
+            help="Uncertainty in the depth measurement (km)", key="depthError"
+        )
+    
+    # Temporal & Advanced Features
+    with st.expander("⏰ Temporal & Advanced Features", expanded=False):
+        col1, col2 = st.columns(2)
+        
+        user_input['days_since_start'] = col1.slider(
+            "Days Since Start", min_value=0.0, max_value=10000.0, value=5000.0,
+            help="Number of days since the beginning of the dataset", key="days_since_start"
+        )
+        user_input['depth_mag_interaction'] = col2.slider(
+            "Depth Mag Interaction", min_value=0.0, max_value=100.0, value=50.0,
+            help="Depth × Magnitude interaction", key="depth_mag_interaction"
+        )
+    
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Predict Button ---
 if st.button("Predict Magnitude 🚀"):
     # Prepare DataFrame: include ALL raw columns the model expects!
     data_row = pd.DataFrame([{col: user_input.get(col, "") for col in raw_features}])
+    
+    # Add target_bin feature if model expects it (temporary fix)
+    # We'll set it to a default value since we can't know the true bin during prediction
+    data_row['target_bin'] = 'Bin3'  # Middle bin as default
+    
     # Convert numeric columns to float
     for col in data_row.columns:
-        if col not in ['magType', 'depth_type']:
+        if col not in ['magType', 'depth_type', 'target_bin']:
             try:
                 data_row[col] = data_row[col].astype(float)
             except Exception:
                 data_row[col] = 0.0
-    # --- Predict ---
-    magnitude = model.predict(data_row)[0]
-    st.markdown(f'<div class="result-box">🌋 <b>Predicted Magnitude:</b> {magnitude:.3f}</div>', unsafe_allow_html=True)
-    st.info("This prediction is powered by a Gradient Boosting model trained on global earthquake records (2000–2025). Try different values to see how magnitude changes!")
+    
+    try:
+        # --- Predict ---
+        magnitude = model.predict(data_row)[0]
+    except Exception as e:
+        st.error(f"Prediction error: {e}")
+        st.info("The model expects different features. Please check the model training.")
+        magnitude = None
+    if magnitude is not None:
+        st.markdown(f'<div class="result-box">🌋 <b>Predicted Magnitude:</b> {magnitude:.3f}</div>', unsafe_allow_html=True)
+        st.info("This prediction is powered by a Gradient Boosting model trained on global earthquake records (2000–2025). Try different values to see how magnitude changes!")
+    else:
+        st.warning("Unable to make prediction due to model configuration issues.")
 
 st.caption("Created by Jarrod, 2025 · Powered by Scikit-learn · Data: USGS")
 
@@ -280,7 +473,7 @@ st.caption("Created by Jarrod, 2025 · Powered by Scikit-learn · Data: USGS")
 
 
 # Load earthquake data
-quake_df = pd.read_csv("usgs_earthquake_data_2000_2025(Small sample size) Real one with submission folder.csv")
+quake_df = pd.read_csv("usgs_earthquake_data_2000_2025.csv")
 
 # --- Sidebar filters for earthquake data ---
 min_mag, max_mag = st.sidebar.slider("Min Magnitude", float(quake_df["mag"].min()), float(quake_df["mag"].max()), float(quake_df["mag"].min()), key="filter_min_mag"), st.sidebar.slider("Max Magnitude", float(quake_df["mag"].min()), float(quake_df["mag"].max()), float(quake_df["mag"].max()), key="filter_max_mag")
@@ -290,8 +483,8 @@ filtered_quake_df = quake_df[(quake_df["mag"] >= min_mag) & (quake_df["mag"] <= 
 
 # Only show Geographic Distribution plot (limit to 1000 rows for performance)
 geo_df = filtered_quake_df.copy()
-if len(geo_df) > 5000:
-    geo_df = geo_df.sample(5000, random_state=42)
+if len(geo_df) > 1000:
+    geo_df = geo_df.sample(1000, random_state=42)
 with st.container():
     st.header("Geographic Distribution with small dataset")
     st.plotly_chart(
