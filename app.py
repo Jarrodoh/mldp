@@ -109,6 +109,7 @@ st.markdown('<div class="big-title">🌏 Earthquake Magnitude Predictor</div>', 
 st.write("""
 Instantly predict the **magnitude** of an earthquake given event characteristics.
 Your input is run through a state-of-the-art AI model trained on global seismic data (2000–2025).
+Ps. Please use dark theme for the streamlit for best experience
 """)
 st.write("---")
 
@@ -279,7 +280,7 @@ st.caption("Created by Jarrod, 2025 · Powered by Scikit-learn · Data: USGS")
 
 
 # Load earthquake data
-quake_df = pd.read_csv("usgs_earthquake_data_2000_2025.csv")
+quake_df = pd.read_csv("usgs_earthquake_data_2000_2025(Small sample size) Real one with submission folder.csv")
 
 # --- Sidebar filters for earthquake data ---
 min_mag, max_mag = st.sidebar.slider("Min Magnitude", float(quake_df["mag"].min()), float(quake_df["mag"].max()), float(quake_df["mag"].min()), key="filter_min_mag"), st.sidebar.slider("Max Magnitude", float(quake_df["mag"].min()), float(quake_df["mag"].max()), float(quake_df["mag"].max()), key="filter_max_mag")
@@ -289,8 +290,8 @@ filtered_quake_df = quake_df[(quake_df["mag"] >= min_mag) & (quake_df["mag"] <= 
 
 # Only show Geographic Distribution plot (limit to 1000 rows for performance)
 geo_df = filtered_quake_df.copy()
-if len(geo_df) > 1000:
-    geo_df = geo_df.sample(1000, random_state=42)
+if len(geo_df) > 5000:
+    geo_df = geo_df.sample(5000, random_state=42)
 with st.container():
     st.header("Geographic Distribution with small dataset")
     st.plotly_chart(
